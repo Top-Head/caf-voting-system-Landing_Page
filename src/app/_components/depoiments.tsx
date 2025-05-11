@@ -1,266 +1,172 @@
 "use client";
 
-import type { ButtonProps, CarouselApi } from "@relume_io/relume-ui";
-import {
-  // Button,
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@relume_io/relume-ui";
-import clsx from "clsx";
-import { useEffect, useState } from "react";
-import { RxArrowRight } from "react-icons/rx"; 
+import { useRef } from "react";
+import { useMediaQuery } from "@relume_io/relume-ui";
+import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
+import img1 from "../../../public/avatares/Joao.jpg";
+import img2 from "../../../public/avatares/david.jpg";
+import img3 from "../../../public/avatares/mbala.jpg";
+import img4 from "../../../public/avatares/joy.jpg";
+import Image from "next/image";
+import { StaticImageData } from "next/image";
 
 
+// ===========================
+// Tipagens
+// ===========================
 type ImageProps = {
-  src: string;
+  src: string | StaticImageData;
   alt?: string;
 };
 
-type Testimonial = {
-  logo: ImageProps;
-  quote: string;
-  avatar: ImageProps;
-  name: string;
-  position: string;
-  companyName: string;
-  button: ButtonProps;
+type FeatureSectionProps = {
+  icon: ImageProps;
+  title: string;
+  description: string;
+  personName: string;
+  personTitle: string;
 };
+
 
 type Props = {
   heading: string;
-  description: string;
-  testimonials: Testimonial[];
+  featureSections: FeatureSectionProps[];
 };
 
-export type Testimonial23Props = React.ComponentPropsWithoutRef<"section"> & Partial<Props>;
+export type Layout417Props = React.ComponentPropsWithoutRef<"section"> & Partial<Props>;
 
-export const Testimonial23 = (props: Testimonial23Props) => {
-  const { heading, description, testimonials } = {
-    ...Testimonial23Defaults,
+// ===========================
+// Componente Principal
+// ===========================
+export const Layout417 = (props: Layout417Props) => {
+  const { heading, featureSections } = {
+    ...Layout417Defaults,
     ...props,
   } as Props;
 
-  const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
-  useEffect(() => {
-    if (!api) {
-      return;
-    }
-    setCurrent(api.selectedScrollSnap() + 1);
-    api.on("select", () => {
-      setCurrent(api.selectedScrollSnap() + 1);
-    });
-  }, [api]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: containerRef });
 
   return (
-    <section id="relume" className="px-[5%] py-0 md:py-24 lg:py-28 translate-y-0 sx:mt-18 lg:mt-0" >
-      <div className="container -translate-y-16 sx:-translate-y-0 lg:-translate-y-16">
-        <div className="container mb-8 max-w-lg text-center md:mb-18 lg:mb-20">
-          <h1 className="mb-5 text-5xl font-bold md:mb-6 md:text-7xl lg:text-8xl">{heading}</h1>
-          <p className="md:text-md sx:text-center">{description}</p>
-        </div>
+    <section ref={containerRef}>
+      <div className="container relative h-[300svh] lg:h-[300vh] -mt-32">
+        <div className="sticky top-0 grid h-[100svh] grid-cols-1 content-center items-center justify-center px-[5%] md:flex md:content-normal md:px-0 lg:h-screen">
 
-        <Carousel
-          setApi={setApi}
-          opts={{
-            loop: true,
-            duration: 20,
-            align: "start",
-          }}
-          className="overflow-hidden bg-background-primary md:px-3.5"
-        >
-          <CarouselContent className="ml-0 md:flex-row">
-            {testimonials.map((testimonial, index) => (
-              <CarouselItem
+          {/* Cartões animados */}
+          <div className="sticky top-0 mx-auto mt-12 flex min-h-[24.5rem] w-full max-w-sm flex-col items-center justify-center sm:mt-24 md:relative lg:mt-0">
+            {featureSections.map((section, index) => (
+              <FeatureSection
                 key={index}
-                className="mr-4 basis-full pl-0 md:mr-0 md:basis-1/2 md:px-4 lg:basis-1/3"
-              >
-                <div className="flex w-full flex-col items-start justify-between border
-                 border-border-primary 
-                p-6 md:p-8">
-                  <div className="rb-12 mb-12">
-                    <img
-                      className="max-h-12"
-                      src={testimonial.logo.src}
-                      alt={testimonial.logo.alt}
-                    />
-                  </div>
-                  <blockquote className="mb-5 md:mb-6 md:text-md">{testimonial.quote}</blockquote>
-                  <div className="flex w-full flex-col items-start text-left 
-                  md:w-fit md:flex-row md:items-center">
-                    <img
-                      src={testimonial.avatar.src}
-                      alt={testimonial.avatar.alt}
-                      className="mb-4 mr-0 size-12 min-h-12 min-w-12 
-                      rounded-full object-cover md:mb-0 md:mr-4"
-                    />
-                    <div>
-                      <p className="font-semibold">{testimonial.name}</p>
-                      <p>
-                        {testimonial.position}, {testimonial.companyName}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-6 py-1 md:mt-8">
-                   
-                  </div>
-                </div>
-              </CarouselItem>))}
-          </CarouselContent>
-          <CarouselPrevious className="-mt-0 hidden bg-white md:flex md:size-12 lg:size-14" />
-          <CarouselNext className="-mt-2 hidden bg-white md:flex md:size-12 lg:size-14" />
-        </Carousel>
-        <div className="flex items-center justify-center pt-[30px] sm:pt-[30px]">
-          {testimonials.map((_, index) => (
-            <button 
-              key={index}
-              onClick={() => api?.scrollTo(index)}
-              className={clsx("relative mx-[3px] inline-block size-2 rounded-full", {
-                "bg-black": current === index + 1,
-                "bg-neutral-darker/40": current !== index + 1,
-              })}
-            />
-          ))}
+                section={section}
+                index={index}
+                totalSections={featureSections.length}
+                scrollYProgress={scrollYProgress}
+              />
+            ))}
+          </div>
         </div>
       </div>
+
+      {/* Camada de fundo */}
+      <div className="absolute inset-0 -z-10 mt-[100vh]" />
     </section>
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const Testimonial23Defaults: Testimonial23Props = {
-  heading: "Customer testimonials",
+// ===========================
+// Componente de Seção de Destaque
+// ===========================
+const FeatureSection = ({
+  section,
+  index,
+  totalSections,
+  scrollYProgress,
+}: {
+  section: FeatureSectionProps;
+  index: number;
+  totalSections: number;
+  scrollYProgress: MotionValue<number>;
+}) => {
+  const isMobile = useMediaQuery("(max-width: 767px)");
 
-  description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  testimonials: [
+  const sectionScrollStart = index / totalSections;
+  const sectionScrollEnd = (index + 1) / totalSections;
+
+  const rotate = useTransform(scrollYProgress, [sectionScrollStart, sectionScrollEnd], [0 + index * 3, -10]);
+  const translateY = useTransform(scrollYProgress, [sectionScrollStart, sectionScrollEnd], ["0vh", "-120vh"]);
+
+  return (
+    <motion.div
+      className="absolute mx-6 flex w-[500px] h-[400px] flex-col justify-between border border-border-primary bg-white p-8 shadow-lg md:mx-0"
+      style={{
+        rotate: isMobile && index === totalSections - 1 ? "9deg" : rotate,
+        translateY: isMobile && index === totalSections - 1 ? undefined : translateY,
+        zIndex: `${totalSections - index}`,
+      }}
+    >
+      <div className=" flex items-center gap-2 mb-6 md:mb-8">
+        <Image src={section.icon.src} alt={section.icon.alt ?? "Imagem"} width={100} height={100} className="w-[55px] h-[55px] object-cover rounded-full" />
+        <div>
+          <h1 className="text-[16px] font-semibold text-black">
+            {section.personName}
+          </h1>
+          <h1>
+            {section.personTitle}
+          </h1>
+        </div>
+      </div>
+      <h3 className="mb-3 text-xl font-bold md:mb-4 md:text-2xl">{section.title}</h3>
+      <p>{section.description}</p>
+    </motion.div>
+  );
+};
+
+// ===========================
+// Dados Padrão
+// ===========================
+export const Layout417Defaults: Layout417Props = {
+  heading: "Reals",
+  featureSections: [
     {
-      logo: {
-        src: "https://d22po4pjz3o32e.cloudfront.net/webflow-logo.svg",
-        alt: "Testimonial logo 1",
+      icon: {
+        src: img1,
+        alt: "Imagem João 1",
       },
-      quote:
-        '"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare."',
-      avatar: {
-        src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-        alt: "Testimonial avatar 1",
-      },
-      name: "Name Surname",
-      position: "Position",
-      companyName: "Company name",
-      button: {
-        title: "Read case study",
-        variant: "link",
-        size: "link",
-        iconRight: <RxArrowRight />,
-      },
+      title: "Subheading one",
+      description: '"Participar da Mega Feira foi, sem dúvida, uma das experiências mais marcantes da minha vida. Ter a chance de apresentar meu projeto para tantas pessoas, receber feedbacks e ver o impacto do que criei me fez acreditar ainda mais no meu potencial. A feira não só me impulsionou como estudante, mas também me inspirou a seguir carreira na área de tecnologia. É incrível fazer parte de algo que transforma ideias em realidades."',
+       personName: "João Tambue",
+      personTitle: "Expositor da edição 2023",
     },
     {
-      logo: {
-        src: "https://d22po4pjz3o32e.cloudfront.net/relume-logo.svg",
-        alt: "Testimonial logo 2",
+      icon: {
+        src: img2,
+        alt: "Imagem João 2",
       },
-      quote:
-        '"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare."',
-      avatar: {
-        src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-        alt: "Testimonial avatar 2",
-      },
-      name: "Name Surname",
-      position: "Position",
-      companyName: "Company name",
-      button: {
-        title: "Read case study",
-        variant: "link",
-        size: "link",
-        iconRight: <RxArrowRight />,
-      },
+      title: "Subheading two",
+      description: "Texto do segundo card.",
+      personName: "David Armando",
+      personTitle: "Convidada especial",
     },
     {
-      logo: {
-        src: "https://d22po4pjz3o32e.cloudfront.net/webflow-logo.svg",
-        alt: "Testimonial logo 3",
+      icon: {
+        src: img3,
+        alt: "Imagem João 3",
       },
-      quote:
-        '"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare."',
-      avatar: {
-        src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-        alt: "Testimonial avatar 3",
-      },
-      name: "Name Surname",
-      position: "Position",
-      companyName: "Company name",
-      button: {
-        title: "Read case study",
-        variant: "link",
-        size: "link",
-        iconRight: <RxArrowRight />,
-      },
+      title: "Subheading three",
+      description: "Texto do terceiro card.",
+      personName: "Domingos Mbala",
+      personTitle: "Mentor técnico",
     },
     {
-      logo: {
-        src: "https://d22po4pjz3o32e.cloudfront.net/relume-logo.svg",
-        alt: "Testimonial logo 4",
+      icon: {
+        src: img4,
+        alt: "Imagem João 4",
       },
-      quote:
-        '"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare."',
-      avatar: {
-        src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-        alt: "Testimonial avatar 4",
-      },
-      name: "Name Surname",
-      position: "Position",
-      companyName: "Company name",
-      button: {
-        title: "Read case study",
-        variant: "link",
-        size: "link",
-        iconRight: <RxArrowRight />,
-      },
-    },
-    {
-      logo: {
-        src: "https://d22po4pjz3o32e.cloudfront.net/webflow-logo.svg",
-        alt: "Testimonial logo 5",
-      },
-      quote:
-        '"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare."',
-      avatar: {
-        src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-        alt: "Testimonial avatar 5",
-      },
-      name: "Name Surname",
-      position: "Position",
-      companyName: "Company name",
-      button: {
-        title: "Read case study",
-        variant: "link",
-        size: "link",
-        iconRight: <RxArrowRight />,
-      },
-    },
-    {
-      logo: {
-        src: "https://d22po4pjz3o32e.cloudfront.net/relume-logo.svg",
-        alt: "Testimonial logo 6",
-      },
-      quote:
-        '"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare."',
-      avatar: {
-        src: "https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg",
-        alt: "Testimonial avatar 6",
-      },
-      name: "Name Surname",
-      position: "Position",
-      companyName: "Company name",
-      button: {
-        title: "Read case study",
-        variant: "link",
-        size: "link",
-        iconRight: <RxArrowRight />,
-      },
+      title: "Subheading four",
+      description: "Texto do quarto card.",
+      personName: "Antonica",
+      personTitle: "Palestrante internacional",
     },
   ],
 };
+

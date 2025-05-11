@@ -1,9 +1,12 @@
 import { Hero } from "./_components/hero";
 import { SobreEvento} from "./_components/SobreEvento";
 import FaqSection from "./_components/FaqSection";
+import { Title } from './_components/title';
 import DestaqueCarousel from "./_components/DestaqueCarousel";
 import InnovationHistory from "./_components/InnovationHistory";
-import { Testimonial23 } from "./_components/depoiments";
+import { Layout417 } from "./_components/depoiments";
+import Footer from "./_components/Footer";
+
 
 export default function Home () {
   return(
@@ -11,9 +14,11 @@ export default function Home () {
       <Hero />
       <SobreEvento />
       <FaqSection />
+      <Title />
       <DestaqueCarousel />
       <InnovationHistory />
-      <Testimonial23 />
+      <Layout417 />
+      <Footer />
     </main>
   )
 }

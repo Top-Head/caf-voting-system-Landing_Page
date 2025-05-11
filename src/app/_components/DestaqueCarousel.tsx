@@ -56,6 +56,7 @@ export default function DestaqueCarousel() {
 
   return (
     <section className="w-[1320px] mx-auto flex items-center justify-center py-10 px-4">
+      
       <button onClick={prev} className="rounded-full border p-2 mr-4 hover:bg-gray-100 transition">
         <ArrowLeft className="flex items-center justify-center" />
       </button>
